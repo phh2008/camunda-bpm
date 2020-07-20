@@ -5,3 +5,7 @@ camunda.bpm:
     firstName: Demo
   filter:
     create: All tasks
+
+spring:
+  jersey:
+    application-path: /engine-rest
