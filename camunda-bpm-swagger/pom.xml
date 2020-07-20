@@ -27,9 +27,18 @@
             <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
             <version>${camunda.spring-boot.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -46,7 +55,20 @@
             <artifactId>camunda-bpm-swagger-json</artifactId>
             <version>7.8.0</version>
         </dependency>
-
+        <!-- java 8 时间支持 -->
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-plugin-spin</artifactId>
+            <version>${camunda.spring-boot.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+        </dependency>-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
