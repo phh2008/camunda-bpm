@@ -1,11 +1,12 @@
+server:
+  port: 8080
 camunda.bpm:
   admin-user:
-    id: demo
-    password: demo
-    firstName: Demo
+    id: admin
+    password: 123456
+    firstName: admin
   filter:
     create: All tasks
-
 spring:
   jersey:
     application-path: /engine-rest
