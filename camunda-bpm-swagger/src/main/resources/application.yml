@@ -1,10 +1,14 @@
-camunda.bpm:
-  admin-user:
-    id: admin
-    password: 123456
-    firstName: admin
-  filter:
-    create: All tasks
+camunda:
+  bpm:
+    enabled: true
+    admin-user:
+      id: admin
+      password: 123456
+      firstName: admin
+    job-execution:
+      enabled: false
+    filter:
+      create: All tasks
 spring:
   jersey:
     application-path: /engine-rest
