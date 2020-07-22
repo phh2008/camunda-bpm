@@ -9,6 +9,7 @@ camunda:
       enabled: false
     filter:
       create: All tasks
+    id-generator: snowFlakeIdGenerator
 spring:
   jersey:
     application-path: /engine-rest

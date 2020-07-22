@@ -19,8 +19,41 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <postGreSql.version>42.2.14</postGreSql.version>
         <druid.version>1.1.22</druid.version>
+        <jmh.version>1.23</jmh.version>
+        <lombok.version>1.18.4</lombok.version>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <!-- 排除 junit4 -->
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <scope>test</scope>
+            <version>${jmh.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <scope>test</scope>
+            <version>${jmh.version}</version>
+        </dependency>
+    </dependencies>
     <profiles>
         <profile>
             <id>dev</id>
