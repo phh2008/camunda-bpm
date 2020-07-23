@@ -1,7 +1,6 @@
 package com.example;
 
-import org.camunda.bpm.engine.ManagementService;
-import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
 import org.camunda.bpm.spring.boot.starter.event.PostDeployEvent;
@@ -23,6 +22,8 @@ public class CamundaSwaggerApplication {
 
     @Autowired
     private RuntimeService runtimeService;
+    @Autowired
+    private RepositoryService repositoryService;
 
     public static void main(String[] args) {
         SpringApplication.run(CamundaSwaggerApplication.class, args);
@@ -33,8 +34,8 @@ public class CamundaSwaggerApplication {
     public void run(PostDeployEvent event) {
         //runtimeService.startProcessInstanceByKey("Process_1");
         //部署一个请假流程
-        ProcessEngine engine = event.getProcessEngine();
-        engine.getRepositoryService().createDeployment().addClasspathResource("diagram_leave.bpmn").deploy();
+        repositoryService.createDeployment().addClasspathResource("diagram_leave.bpmn").deploy();
+        repositoryService.createDeployment().addClasspathResource("diagram_leave2.bpmn").deploy();
     }
 
 }

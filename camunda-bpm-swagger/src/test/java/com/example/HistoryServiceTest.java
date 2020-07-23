@@ -32,7 +32,7 @@ public class HistoryServiceTest {
     @Test
     public void testQueryHistoryTask() {
         String assignee = "zhangsan";
-        String processIntanceId = "6b22496e-ca68-11ea-a3bf-0a0027000006";
+        String processIntanceId = "483681482443984896";
         List<HistoricTaskInstance> list = historyService.createHistoricTaskInstanceQuery()
                 .processInstanceId(processIntanceId)
                 //.taskAssignee(assignee)
@@ -53,9 +53,12 @@ public class HistoryServiceTest {
         });
     }
 
+    /**
+     * 查询流程实例活动节点
+     */
     @Test
     public void testQueryHistoryActivity() {
-        String processInstanceId = "483320878164217856";
+        String processInstanceId = "483681482443984896";
         List<HistoricActivityInstance> list = historyService.createHistoricActivityInstanceQuery()//创建历史活动实例的查询
                 .processInstanceId(processInstanceId)//
                 .orderByHistoricActivityInstanceStartTime().asc()//
@@ -66,7 +69,7 @@ public class HistoryServiceTest {
         }
         for (HistoricActivityInstance hai : list) {
             System.out.println("活动ID: " + hai.getId());
-            System.out.println("活动名称: "+hai.getActivityName());
+            System.out.println("活动名称: " + hai.getActivityName());
             System.out.println("实例定义ID: " + hai.getProcessDefinitionId());
             System.out.println("活动类型: " + hai.getActivityType());
             System.out.println("开始时间: " + hai.getStartTime());
