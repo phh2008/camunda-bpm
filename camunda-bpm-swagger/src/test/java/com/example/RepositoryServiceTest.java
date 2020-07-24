@@ -64,7 +64,7 @@ public class RepositoryServiceTest {
                 .map(e -> (ExecutionEntity) e)
                 .collect(toList());
         // 7,使用活动ID取出xml和当前活动ID相关节点数据
-        if (executions == null || executions.isEmpty()) {
+        if (executions.isEmpty()) {
             System.err.println("流程execution为空");
             return;
         }
@@ -105,9 +105,7 @@ public class RepositoryServiceTest {
         }
         for (PvmTransition pvm : pvmTransitions) {
             Properties props = pvm.getProperties();
-            props.toMap().forEach((k, v) -> {
-                System.out.println(k + " : " + v);
-            });
+            props.toMap().forEach((k, v) -> System.out.println(k + " : " + v));
             System.out.println("------------------------------------------------");
         }
     }

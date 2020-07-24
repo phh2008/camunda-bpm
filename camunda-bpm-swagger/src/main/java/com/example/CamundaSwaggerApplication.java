@@ -32,10 +32,6 @@ public class CamundaSwaggerApplication {
 
     @EventListener
     public void run(PostDeployEvent event) {
-        //runtimeService.startProcessInstanceByKey("Process_1");
-        //部署一个请假流程
-        repositoryService.createDeployment().addClasspathResource("diagram_leave.bpmn").deploy();
-        repositoryService.createDeployment().addClasspathResource("diagram_leave2.bpmn").deploy();
     }
 
 }
