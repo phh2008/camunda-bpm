@@ -4,11 +4,13 @@ import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.history.HistoricActivityInstance;
 import org.camunda.bpm.engine.history.HistoricProcessInstance;
 import org.camunda.bpm.engine.history.HistoricTaskInstance;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -63,10 +65,7 @@ public class HistoryServiceTest {
                 .processInstanceId(processInstanceId)//
                 .orderByHistoricActivityInstanceStartTime().asc()//
                 .list();
-        if (list == null || list.isEmpty()) {
-            System.err.println("活动为空");
-            return;
-        }
+        Assertions.assertFalse(CollectionUtils.isEmpty(list), "活动为空");
         for (HistoricActivityInstance hai : list) {
             System.out.println("活动ID: " + hai.getId());
             System.out.println("活动名称: " + hai.getActivityName());
