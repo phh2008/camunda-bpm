@@ -83,7 +83,7 @@ public class HistoryServiceTest {
      */
     @Test
     public void testQueryHistoryProcessInstance() {
-        String bizKey = "biz-leave-20200722002";
+        String bizKey = "biz-leave-20200724002";
         List<HistoricProcessInstance> list = historyService.createHistoricProcessInstanceQuery()//创建历史流程实例查询
                 .processInstanceBusinessKey(bizKey)
                 .orderByProcessInstanceStartTime().asc()
