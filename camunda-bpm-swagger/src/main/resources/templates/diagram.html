@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@7.3.0/dist/assets/diagram-js.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@7.3.0/dist/assets/bpmn-font/css/bpmn.css"/>
+    <script src="https://unpkg.com/bpmn-js@7.3.0/dist/bpmn-modeler.development.js"></script>
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+    <style type="text/css">
+        .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+          stroke: #1424e2;
+          fill: pink !important; /* color elements as green */
+        }
+
+        /*连线颜色*/
+        .highlight .djs-visual path{
+            stroke: blue !important;
+        }
+
+        html, body, #container {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    var viewer = new BpmnJS({
+      container: '#container'
+    });
+    async function showDiagram(diagramXML) {
+      await viewer.importXML(diagramXML);
+      console.log(diagramXML);
+      var canvas = viewer.get('canvas');
+      canvas.addMarker('StartEvent_1', 'highlight');
+      canvas.addMarker('Flow_19bst4o', 'highlight');
+      canvas.addMarker('Activity_0ohoshk', 'highlight');
+      canvas.addMarker('Flow_0it3lr3', 'highlight');
+      canvas.addMarker('Activity_155ad8n', 'highlight');
+    }
+    // load + show diagram
+    $.get('/test/bpmn', showDiagram, 'text');
+
+
+</script>
+</body>
+</html>
