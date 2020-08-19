@@ -56,6 +56,8 @@ public class TestController {
 
     /**
      * goto 流程图页面
+     * 参考 bpmn-js:
+     * https://github.com/bpmn-io/bpmn-js-examples
      *
      * @return
      */
