@@ -8,23 +8,69 @@
     <script src="https://unpkg.com/bpmn-js@7.3.0/dist/bpmn-modeler.development.js"></script>
     <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
     <style type="text/css">
+
+        /*填充颜色*/
         .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-          stroke: #1424e2;
-          fill: pink !important; /* color elements as green */
+          fill: pink !important;
+        }
+
+        /*方框高亮*/
+        .highlight .djs-visual rect{
+            stroke: blue !important;
+        }
+
+        /*多边型高亮*/
+        .highlight .djs-visual polygon{
+            stroke: blue !important;
+        }
+
+        /*圆型高亮*/
+        .highlight .djs-visual circle{
+            stroke: blue !important;
         }
 
         /*连线颜色*/
         .highlight .djs-visual path{
             stroke: blue !important;
+            //箭头颜色
+            marker-end: url("#cust-sequenceflow-end-white-red") !important;
+        }
+
+        /*带条件的连线起始空心点颜色*/
+        .highlight .djs-visual path[style*="marker-start"]{
+            marker-end: url("#cust-sequenceflow-end-white-red") !important;
+            marker-start: url("#cust-conditional-flow-marker-white-red") !important;
+        }
+
+        /*箭头颜色*/
+        .highlight .djs-visual path[style*="marker-end"]{
+            marker-end: url("#cust-sequenceflow-end-white-red") !important;
         }
 
         html, body, #container {
             height: 100%;
         }
+
+
     </style>
 </head>
 <body>
 <div id="container"></div>
+<!-- 自定义高亮时用到的箭头标签 -->
+<svg>
+    <defs>
+        <marker id="cust-sequenceflow-end-white-red" viewBox="0 0 20 20" refX="11" refY="10"
+                markerWidth="10" markerHeight="10" orient="auto">
+            <path d="M 1 5 L 11 10 L 1 15 Z"
+                  style="fill: #f70a0a;stroke-width: 1px;stroke-linecap: round;stroke-dasharray: 10000, 1;stroke: red;"></path>
+        </marker>
+        <marker id="cust-conditional-flow-marker-white-red" viewBox="0 0 20 20" refX="-1"
+                refY="10" markerWidth="10" markerHeight="10" orient="auto">
+            <path d="M 0 10 L 8 6 L 16 10 L 8 14 Z"
+                  style="fill: white;stroke-width: 1px;stroke-linecap: round;stroke-dasharray: 10000, 1;stroke: red;"></path>
+        </marker>
+    </defs>
+</svg>
 <script>
     var viewer = new BpmnJS({
       container: '#container'
@@ -33,16 +79,17 @@
       await viewer.importXML(diagramXML);
       console.log(diagramXML);
       var canvas = viewer.get('canvas');
+      //设置高亮的节点
       canvas.addMarker('StartEvent_1', 'highlight');
       canvas.addMarker('Flow_19bst4o', 'highlight');
       canvas.addMarker('Activity_0ohoshk', 'highlight');
       canvas.addMarker('Flow_0it3lr3', 'highlight');
       canvas.addMarker('Activity_155ad8n', 'highlight');
+      canvas.addMarker('Flow_0eqbeyf', 'highlight');
+      canvas.addMarker('Activity_1ntdiem', 'highlight');
     }
-    // load + show diagram
+    // 加载流程图信息
     $.get('/test/bpmn', showDiagram, 'text');
-
-
 </script>
 </body>
 </html>

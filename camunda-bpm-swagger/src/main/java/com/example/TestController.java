@@ -30,6 +30,12 @@ public class TestController {
     @Autowired
     private RepositoryService repositoryService;
 
+    /**
+     * 获取流程图xml文件
+     *
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
     @GetMapping("/bpmn")
     public String getBpmn() throws IOException {
@@ -44,10 +50,15 @@ public class TestController {
         List<Resource> res = repositoryService.getDeploymentResources(deploymentId);
         System.out.println(res);
         //InputStream is = repositoryService.getResourceAsStreamById(deploymentId, res.get(0).getId());
-        InputStream is = repositoryService.getResourceAsStream(deploymentId,define.getResourceName());
+        InputStream is = repositoryService.getResourceAsStream(deploymentId, define.getResourceName());
         return IOUtils.toString(is);
     }
 
+    /**
+     * goto 流程图页面
+     *
+     * @return
+     */
     @GetMapping("/diagram")
     public ModelAndView showDiagram() {
 
