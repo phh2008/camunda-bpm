@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@7.3.0/dist/assets/diagram-js.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@7.3.0/dist/assets/bpmn-font/css/bpmn.css"/>
-    <script src="https://unpkg.com/bpmn-js@7.3.0/dist/bpmn-modeler.development.js"></script>
+    <link rel="stylesheet" th:href="@{/static/css/bpmn.css}">
+    <link rel="stylesheet" th:href="@{/static/css/diagram-js.css}">
+    <script th:src="@{/static/js/bpmn-modeler.production.min.js}"></script>
+    <script th:src="@{/static/js/bpmn-viewer.production.min.js}"></script>
     <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
     <style type="text/css">
-
         /*填充颜色*/
         .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
           fill: pink !important;
@@ -52,9 +52,11 @@
         }
 
 
+
     </style>
 </head>
 <body>
+<input type="hidden" th:value="${procInstId}" id="procInstId"/>
 <div id="container"></div>
 <!-- 自定义高亮时用到的箭头标签 -->
 <svg>
@@ -75,21 +77,27 @@
     var viewer = new BpmnJS({
       container: '#container'
     });
-    async function showDiagram(diagramXML) {
-      await viewer.importXML(diagramXML);
-      console.log(diagramXML);
+    async function showDiagram(result) {
+      console.log(JSON.stringify(result));
+      //此处必需等待importXml完成，否则后面设置高亮会报错
+      await viewer.importXML(result.bpmnXml);
       var canvas = viewer.get('canvas');
       //设置高亮的节点
-      canvas.addMarker('StartEvent_1', 'highlight');
-      canvas.addMarker('Flow_19bst4o', 'highlight');
-      canvas.addMarker('Activity_0ohoshk', 'highlight');
-      canvas.addMarker('Flow_0it3lr3', 'highlight');
-      canvas.addMarker('Activity_155ad8n', 'highlight');
-      canvas.addMarker('Flow_0eqbeyf', 'highlight');
-      canvas.addMarker('Activity_1ntdiem', 'highlight');
+      for(let node of result.nodes){
+        console.log(node);
+        canvas.addMarker(node, 'highlight');
+      }
+      //示例：
+      //canvas.addMarker('StartEvent_1', 'highlight');
+      //canvas.addMarker('Flow_19bst4o', 'highlight');
+      //canvas.addMarker('Activity_0ohoshk', 'highlight');
     }
     // 加载流程图信息
-    $.get('/test/bpmn', showDiagram, 'text');
+    //$.get('/test/bpmn', showDiagram, 'text');
+    let id=$("#procInstId").val();
+    $.get('/test/getBpmnByProcessInstanceId?processInstanceId='+id, showDiagram, 'json');
+
+
 </script>
 </body>
 </html>
