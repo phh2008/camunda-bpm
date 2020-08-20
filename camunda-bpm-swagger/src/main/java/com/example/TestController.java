@@ -92,15 +92,18 @@ public class TestController {
         Set<String> actSets = list.stream()
                 .map(HistoricActivityInstance::getActivityId)
                 .collect(Collectors.toSet());
-        System.out.println(actSets);
+        System.out.println("activity-id: " + actSets);
         //获取连线
         BpmnModelInstance instance = repositoryService.getBpmnModelInstance(processDefinition.getId());
         List<SequenceFlow> sequenceFlows = (List<SequenceFlow>) instance.getModelElementsByType(SequenceFlow.class);
         List<String> seqFlows = sequenceFlows.stream()
+                .peek(e -> {
+                    System.out.println("sequenceFlow: " + e.getId() + " : " + e.getName());
+                })
                 .filter(e -> actSets.contains(e.getTarget().getId()) && actSets.contains(e.getSource().getId()))
                 .map(BaseElement::getId)
                 .collect(Collectors.toList());
-        System.out.println(seqFlows);
+        System.out.println("sequenceFlow-id: " + seqFlows);
         Map<String, Object> result = new HashMap<>();
         actSets.addAll(seqFlows);
         result.put("bpmnXml", bpmnXml);
