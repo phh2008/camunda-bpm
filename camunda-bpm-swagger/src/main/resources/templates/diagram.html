@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/static/css/bpmn.css}">
+    <link rel="stylesheet" th:href="@{/static/css/diagram-js.css}">
+    <script th:src="@{/static/js/bpmn-modeler.production.min.js}"></script>
+    <script th:src="@{/static/js/bpmn-viewer.production.min.js}"></script>
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+    <style type="text/css">
+        /*填充颜色*/
+        .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+          fill: pink !important;
+        }
+
+        /*方框高亮*/
+        .highlight .djs-visual rect{
+            stroke: blue !important;
+        }
+
+        /*多边型高亮*/
+        .highlight .djs-visual polygon{
+            stroke: blue !important;
+        }
+
+        /*圆型高亮*/
+        .highlight .djs-visual circle{
+            stroke: blue !important;
+        }
+
+        /*连线颜色*/
+        .highlight .djs-visual path{
+            stroke: blue !important;
+            //箭头颜色
+            marker-end: url("#cust-sequenceflow-end-white-red") !important;
+        }
+
+        /*带条件的连线起始空心点颜色*/
+        .highlight .djs-visual path[style*="marker-start"]{
+            marker-end: url("#cust-sequenceflow-end-white-red") !important;
+            marker-start: url("#cust-conditional-flow-marker-white-red") !important;
+        }
+
+        /*箭头颜色*/
+        .highlight .djs-visual path[style*="marker-end"]{
+            marker-end: url("#cust-sequenceflow-end-white-red") !important;
+        }
+
+        html, body, #container {
+            height: 100%;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<input type="hidden" th:value="${procInstId}" id="procInstId"/>
+<div id="container"></div>
+<!-- 自定义高亮时用到的箭头标签 -->
+<svg>
+    <defs>
+        <marker id="cust-sequenceflow-end-white-red" viewBox="0 0 20 20" refX="11" refY="10"
+                markerWidth="10" markerHeight="10" orient="auto">
+            <path d="M 1 5 L 11 10 L 1 15 Z"
+                  style="fill: #f70a0a;stroke-width: 1px;stroke-linecap: round;stroke-dasharray: 10000, 1;stroke: red;"></path>
+        </marker>
+        <marker id="cust-conditional-flow-marker-white-red" viewBox="0 0 20 20" refX="-1"
+                refY="10" markerWidth="10" markerHeight="10" orient="auto">
+            <path d="M 0 10 L 8 6 L 16 10 L 8 14 Z"
+                  style="fill: white;stroke-width: 1px;stroke-linecap: round;stroke-dasharray: 10000, 1;stroke: red;"></path>
+        </marker>
+    </defs>
+</svg>
+<script>
+    var viewer = new BpmnJS({
+      container: '#container'
+    });
+    async function showDiagram(result) {
+      console.log(JSON.stringify(result));
+      //此处必需等待importXml完成，否则后面设置高亮会报错
+      await viewer.importXML(result.bpmnXml);
+      var canvas = viewer.get('canvas');
+      //设置高亮的节点
+      for(let node of result.nodes){
+        console.log(node);
+        canvas.addMarker(node, 'highlight');
+      }
+      //示例：
+      //canvas.addMarker('StartEvent_1', 'highlight');
+      //canvas.addMarker('Flow_19bst4o', 'highlight');
+      //canvas.addMarker('Activity_0ohoshk', 'highlight');
+    }
+    // 加载流程图信息
+    //$.get('/test/bpmn', showDiagram, 'text');
+    let id=$("#procInstId").val();
+    $.get('/test/getBpmnByProcessInstanceId?processInstanceId='+id, showDiagram, 'json');
+
+
+</script>
+</body>
+</html>

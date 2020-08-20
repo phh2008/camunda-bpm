@@ -68,6 +68,7 @@ public class HistoryServiceTest {
         Assertions.assertFalse(CollectionUtils.isEmpty(list), "活动为空");
         for (HistoricActivityInstance hai : list) {
             System.out.println("活动ID: " + hai.getId());
+            System.out.println("ActivityID: " + hai.getActivityId());
             System.out.println("活动名称: " + hai.getActivityName());
             System.out.println("实例定义ID: " + hai.getProcessDefinitionId());
             System.out.println("活动类型: " + hai.getActivityType());
@@ -83,7 +84,7 @@ public class HistoryServiceTest {
      */
     @Test
     public void testQueryHistoryProcessInstance() {
-        String bizKey = "biz-leave-20200722002";
+        String bizKey = "biz-leave-20200724002";
         List<HistoricProcessInstance> list = historyService.createHistoricProcessInstanceQuery()//创建历史流程实例查询
                 .processInstanceBusinessKey(bizKey)
                 .orderByProcessInstanceStartTime().asc()

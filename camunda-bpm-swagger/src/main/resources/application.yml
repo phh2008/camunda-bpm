@@ -53,3 +53,16 @@ spring:
         reset-enable: false
         # 开启druid监控页面
         enabled: true
+  resources:
+    static-locations: ["classpath:/templates","classpath:/resources","classpath:/static","classpath:/public"]
+  mvc:
+    static-path-pattern: /static/**
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+    servlet:
+      content-type: text/html
