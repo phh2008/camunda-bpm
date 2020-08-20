@@ -1,0 +1,78 @@
+前言：
+
+進行會簽功能驗測，會簽的定義為：
+1. 原活動任務簽核者 J 會簽給 H，請 H 表達意見提供參考，此時 H 僅有 comment 功能，不會影響流程的進行，且 J 需等待 H 任務完成後才可繼續原本簽核動作；
+2. 當 H 完成動作之後，流程回到原任務簽核者 J 身上，J 可進行簽核作業，流程依據設定結果繼續進行；
+3. 如果 J 會簽給多人時，則需要等待所有會簽者都完成後，流程才會回到原任務簽核者 J 身上。
+
+將驗測兩種會簽功能
+1. 簽核者一次會簽單人；
+2. 簽核者一次會簽多人。
+備註：暫時先不考慮會簽者再進行會簽動作。
+
+依舊使用 ~848 的請假流程進行驗測。
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+驗測內容：簽核者一次會簽單人
+送單流程：lisi -> 上級主管(zhangsan) -> 會簽 tom -> 回到上級主管(zhangsan) -> 最高主管(wangwu) -> 會簽 tom -> 回到最高主管(wangwu) -> HR(zhaoliu) 正常結束
+
+僅直接採用 taskService.delegateTask 即可達成單一會簽單人功能，機制概述如下：
+1. task 的原本 assignee 變成 task owner，delegateTo（會簽者） 變成 assignee；
+2. 會簽者可直接進行 comment & complete 動作，當完成任務時 kernel 會將 task 的 assignee 改回原簽核者（task owner value），且 task owner 不會被清除；
+3. 若活動中有多個上級主管，各自主管可以進行會簽作業，當最後一位主管完成簽核後，流程會繼續往下執行。
+4. 且可與 Multi instance 機制配合運作，使得依序審批的上級主管機制可如預期運作。
+
+可參考 LeaveProcessEngineTest.java 中的 delegateTo() 
+key code： this.taskService.delegateTask(task.getId(), delegateTo);
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+log 如下：
+*************************queryHistoryTaskByBusinessKey key is biz-leave4-v3-202008170001 *************************
+task id: 492733905984688128 
+activity name: 填写请假 
+process instance id: 492733905904996352 
+owner null 
+assignee lisi 
+execution id: 492733905904996352 
+start time: Mon Aug 17 13:49:43 CST 2020 
+end time: Mon Aug 17 13:50:54 CST 2020 
+spend time: 71355 
+comment records: 0
+----------------------------------------------
+task id: 492734206363963392 
+activity name: 依序审批 
+process instance id: 492733905904996352 
+owner zhangsan 
+assignee zhangsan 
+execution id: 492734206338797568 
+start time: Mon Aug 17 13:50:54 CST 2020 
+end time: Mon Aug 17 14:48:49 CST 2020 
+spend time: 3474091 
+comment records: 2
+  comment is comment by tom by tom @ Mon Aug 17 14:19:35 CST 2020 
+  comment is task assignee is zhangsan , delegateTask to tom now by null @ Mon Aug 17 14:10:52 CST 2020 
+----------------------------------------------
+task id: 492748778743402498 
+activity name: 依序审批 
+process instance id: 492733905904996352 
+owner wangwu 
+assignee wangwu 
+execution id: 492734206338797568 
+start time: Mon Aug 17 14:48:49 CST 2020 
+end time: Mon Aug 17 15:12:27 CST 2020 
+spend time: 1417761 
+comment records: 2
+  comment is comment by Tom from UI by tom @ Mon Aug 17 15:10:45 CST 2020 
+  comment is task assignee is wangwu , delegateTask to tom now by null @ Mon Aug 17 14:51:12 CST 2020 
+----------------------------------------------
+task id: 492754726262280192 
+activity name: 人事归档 
+process instance id: 492733905904996352 
+owner null 
+assignee zhaoliu 
+execution id: 492733905904996352 
+start time: Mon Aug 17 15:12:27 CST 2020 
+end time: null 
+spend time: null 
+comment records: 0
+----------------------------------------------

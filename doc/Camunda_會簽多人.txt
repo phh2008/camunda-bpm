@@ -1,0 +1,85 @@
+前言：
+
+進行會簽功能驗測，會簽的定義為：
+1. 原活動任務簽核者 J 會簽給 H，請 H 表達意見提供參考，此時 H 僅有 comment 功能，不會影響流程的進行，且 J 需等待 H 任務完成後才可繼續原本簽核動作；
+2. 當 H 完成動作之後，流程回到原任務簽核者 J 身上，J 可進行簽核作業，流程依據設定結果繼續進行；
+3. 如果 J 會簽給多人時，則需要等待所有會簽者都完成後，流程才會回到原任務簽核者 J 身上。
+
+將驗測兩種會簽功能
+1. 簽核者一次會簽單人；
+2. 簽核者一次會簽多人。
+備註：暫時先不考慮會簽者再進行會簽動作。
+
+依舊使用 ~848 的請假流程進行驗測。
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+驗測內容：簽核者一次會簽多人
+
+送單流程：lisi -> 上級主管(zhangsan) -> 會簽 tom -> 回到上級主管(zhangsan) -> 最高主管(wangwu) -> 會簽 tom & jacklin -> 回到最高主管(wangwu) -> HR(zhaoliu) 正常結束
+
+重點說明：於最高主管 wangwu 時會簽 tom & jacklin，其中 tom 已經在之前上級主管已經被指定會簽過一次了，表示可於同一活動上多個簽核者可重複會簽同一人。
+
+尚無找到 camunda 可一次會簽多人的機制，先行客製調整達到初步需求，想法概述如下：
+1. 指定多人會簽時，將原 task 的 owner 設定為原簽核者，透過 taskService.claim(task.getId(), null) 將 task 的 assignee 清空，則此時沒人可影響流程進行；
+2. 會簽者透過 queryCandidateTask 可查到所需要進行的會簽動作，直接進行 comment 動作（無須 claim）；
+3. 注意：若會簽者並無要 comment，仍需要寫入一筆空的 comment，以確保此機制可正常運作；
+4. 透過 getCounterSignUsers() 與 getTaskCommentedUsers() 兩方法取得的集合進行 removeAll 動作，如果為空則表示所有會簽人員都完成會簽作業了；
+5. 再將比照 delegate 模式，將 task assignee 改回原簽核者（task owner value），且不清除 task owner 值。
+6. 若活動中有多個上級主管，各自主管可以進行會簽作業，當最後一位主管完成簽核後，流程會繼續往下執行；
+7. 且可與 Multi instance 機制配合運作，使得依序審批的上級主管機制可如預期運作。
+
+key code 請參考 CounterSignEngineTest.java 
+
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+log 如下：
+*************************queryHistoryTaskByBusinessKey key is biz-leave4-v3-202008190005 *************************
+task id: 493507219879497728 
+activity name: 填写请假 
+process instance id: 493507219778834432 
+owner null 
+assignee lisi 
+execution id: 493507219778834432 
+start time: Wed Aug 19 17:02:35 CST 2020 
+end time: Wed Aug 19 17:02:37 CST 2020 
+spend time: 1406 
+comment records: 0
+----------------------------------------------
+task id: 493507226779127809 
+activity name: 依序审批 
+process instance id: 493507219778834432 
+owner zhangsan 
+assignee zhangsan 
+execution id: 493507226766544896 
+start time: Wed Aug 19 17:02:37 CST 2020 
+end time: Wed Aug 19 17:10:42 CST 2020 
+spend time: 484720 
+comment records: 3
+  comment is OK. thanks. by zhangsan at Wed Aug 19 17:10:15 CST 2020
+  comment is counter sign completed by tom. by tom at Wed Aug 19 17:05:09 CST 2020
+  comment is please provide any comment for reference, thanks. by zhangsan at Wed Aug 19 17:02:38 CST 2020
+----------------------------------------------
+task id: 493509260827824129 
+activity name: 依序审批 
+process instance id: 493507219778834432 
+owner wangwu 
+assignee wangwu 
+execution id: 493507226766544896 
+start time: Wed Aug 19 17:10:42 CST 2020 
+end time: Wed Aug 19 17:17:39 CST 2020 
+spend time: 417507 
+comment records: 3
+  comment is counter sign completed by tom. by tom at Wed Aug 19 17:16:30 CST 2020
+  comment is counter sign completed by jacklin. by jacklin at Wed Aug 19 17:14:40 CST 2020
+  comment is please provide any comment for reference, thanks. by wangwu at Wed Aug 19 17:14:37 CST 2020
+----------------------------------------------
+task id: 493511013728129025 
+activity name: 人事归档 
+process instance id: 493507219778834432 
+owner null 
+assignee zhaoliu 
+execution id: 493507219778834432 
+start time: Wed Aug 19 17:17:40 CST 2020 
+end time: Wed Aug 19 17:20:38 CST 2020 
+spend time: 178408 
+comment records: 0
+----------------------------------------------
