@@ -91,6 +91,7 @@ public class TestController {
                 .list();
         Set<String> actSets = list.stream()
                 .map(HistoricActivityInstance::getActivityId)
+                .filter(e->!e.endsWith("#multiInstanceBody"))
                 .collect(Collectors.toSet());
         System.out.println("activity-id: " + actSets);
         //获取连线
