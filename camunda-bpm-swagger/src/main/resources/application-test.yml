@@ -4,9 +4,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: org.postgresql.Driver
-      url: jdbc:postgresql://localhost:5432/camunda
+      url: jdbc:postgresql://172.16.96.129:5432/camunda
       username: postgres
-      password: root
+      password: post123TXDB
       filters: stat,wall,config
       max-active: 100
       initial-size: 1
