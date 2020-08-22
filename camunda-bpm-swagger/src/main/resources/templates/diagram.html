@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" th:href="@{/static/css/bpmn.css}">
+    <!--
+    <link rel="stylesheet" th:href="@{/static/css/bpmn-font/css/bpmn.css}">
     <link rel="stylesheet" th:href="@{/static/css/diagram-js.css}">
+    -->
+    <!-- 自行编译的css会出现乱码，这里引用官方提供的css -->
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@7.3.0/dist/assets/diagram-js.css">
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@7.3.0/dist/assets/bpmn-font/css/bpmn.css">
+    <!-- 需要编辑流程图时引用 -->
     <script th:src="@{/static/js/bpmn-modeler.production.min.js}"></script>
-    <script th:src="@{/static/js/bpmn-viewer.production.min.js}"></script>
+    <!-- 只需查看流程图时引用 -->
+    <!--<script th:src="@{/static/js/bpmn-viewer.production.min.js}"></script>-->
     <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
     <style type="text/css">
         /*填充颜色*/
@@ -53,9 +60,15 @@
 
 
 
+
+
+
     </style>
 </head>
 <body>
+<div style="text-align:center;">
+    <button id="save-btn">打印控制台</button>
+</div>
 <input type="hidden" th:value="${procInstId}" id="procInstId"/>
 <div id="container"></div>
 <!-- 自定义高亮时用到的箭头标签 -->
@@ -97,6 +110,14 @@
     let id=$("#procInstId").val();
     $.get('/test/getBpmnByProcessInstanceId?processInstanceId='+id, showDiagram, 'json');
 
+    $("#save-btn").click(async function(){
+        try{
+            let result = await viewer.saveXML({ format: true });
+            console.log(result.xml);
+        }catch(e){
+            console.error(e);
+        }
+    });
 
 </script>
 </body>
